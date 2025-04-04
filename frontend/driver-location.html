@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحة السائق</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        /* التصميم العام */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            height: 93.5vh;
+            max-width: 1317px;
+            background-color: #0E2A43;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .info-section {
+            flex: 1;
+            text-align: center;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+
+        .info-item label {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .div {
+            padding: 10px;
+            border: none;
+            height: 2vh;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .map-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 20px;
+        }
+
+        #map {
+            width: 100%;
+            height: 600px;
+            border-radius: 10px;
+        }
+
+        .previous-button {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: orange;
+            color: #000;
+            width: 100px;
+            border: none;
+            padding: 10px 20px;
+            margin-left: 30px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- المعلومات الشخصية -->
+        <div class="info-section">
+            <h2>معلومات السائق</h2>
+            <div class="info-item">
+                <label for="name">اسم السائق:</label>
+                <div class="div">خالد عبده</div>
+            </div><br><br>
+            <div class="info-item">
+                <label for="phone">رقم السائق:</label>
+                <div class="div">01004177012</div>
+            </div><br><br>
+            <div class="info-item">
+                <label for="national-id">الرقم القومي:</label>
+                <div class="div">30304191201536</div>
+            </div><br><br>
+            <div class="info-item">
+                <label for="company-phone">رقم الشركة:</label>
+                <div class="div">2365</div>
+            </div>
+        </div>
+
+        <!-- الخريطة -->
+        <div class="map-section">
+            <!-- <h2>موقع التكتوك</h2> -->
+            <div id="map"></div>
+        </div>
+
+        <!-- الزر "سابقاً" -->
+        <button class="previous-button" onclick="window.location.href='driver data.html'">سابقاً</button>
+    </div>
+
+    <!-- ربط مكتبة Leaflet.js -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // إعداد الخريطة
+        var map = L.map('map').setView([30.0444, 31.2357], 13); // الإسكندرية كمثال
+
+        // إضافة طبقة خلفية (خريطة)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // إضافة علامة GPS عند النقر على الخريطة
+        map.on('click', function (e) {
+            var latlng = e.latlng;
+            var marker = L.marker(latlng).addTo(map);
+            marker.bindPopup("تم تحديد الموقع: " + latlng.toString()).openPopup();
+        });
+    </script>
+</body>
+</html>
