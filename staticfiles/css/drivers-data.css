@@ -1,0 +1,62 @@
+body {
+    font-family: 'Arial', sans-serif;
+    /* background: linear-gradient(to right, #0f0c29, #302b63, #24243e); */
+    background-color: #0E2A43;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    direction: rtl;
+  }
+  
+  .drivers-container {
+    position: relative;
+    text-align: center;
+  }
+  
+  .tuk-tuk-image {
+    width: 300px;
+    position: absolute;
+    top: -50px;
+    right: 50px;
+  }
+  
+  .driver-info {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px); 
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    z-index: 1;
+  }
+  
+  h2 {
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  
+  p {
+    color: #fff;
+    margin: 10px 0;
+  }
+  
+  button {
+    width: 50%;
+    background-color: #3714d4;
+    color: #fff;
+    border: none;
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  button:hover {
+    background-color: #151ea7;
+  }

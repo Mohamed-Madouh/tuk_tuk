@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>رمز التأكيد</title>
+    <link rel="stylesheet" href="{% static 'css/verification-code.css"' %}" />
+  </head>
+  <body>
+    <div  class="verification-container">
+      <img src="{% static 'img/blog-wp-login.png" alt="User Icon' %}" class="user-icon" />
+      <h2>أدخل رمز التأكيد</h2>
+      <form method="POST" action="{% url 'verify_code' %}" id="verification-code-form">
+        {% csrf_token %}
+        <div class="code-inputs">
+          <input class="animated-text custom-input" type="text" maxlength="1" required />
+          <input class="animated-text custom-input" type="text" maxlength="1" required />
+          <input class="animated-text custom-input" type="text" maxlength="1" required />
+          <input class="animated-text custom-input" type="text" maxlength="1" required />
+        </div>
+        <button type="submit">تحقق</button>
+        <button class="back-button" type="submit">السابق</button>
+      </form>
+    </div>
+    <script src="{% static 'js/verification-code.js' %}"></script>
+    <script src="{% static 'js/script.js'%}"></script>
+  </body>
+</html>
