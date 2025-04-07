@@ -91,19 +91,19 @@
             <h2>معلومات السائق</h2>
             <div class="info-item">
                 <label for="name">اسم السائق:</label>
-                <div class="div">خالد عبده</div>
+                <div class="div"> {{ driver.name }}</div>
             </div><br><br>
             <div class="info-item">
                 <label for="phone">رقم السائق:</label>
-                <div class="div">01004177012</div>
+                <div class="div">{{ driver.phone_number }}</div>
             </div><br><br>
             <div class="info-item">
                 <label for="national-id">الرقم القومي:</label>
-                <div class="div">30304191201536</div>
+                <div class="div">{{ driver.national_id }}</div>
             </div><br><br>
             <div class="info-item">
                 <label for="company-phone">رقم الشركة:</label>
-                <div class="div">2365</div>
+                <div class="div">{{ driver.tuk_tuk_number }}5</div>
             </div>
         </div>
 
@@ -114,8 +114,7 @@
         </div>
 
         <!-- الزر "سابقاً" -->
-        <button class="previous-button" onclick="window.location.href='driver data.html'">سابقاً</button>
-    </div>
+        <button class="previous-button" onclick="window.location.href='{% url 'driver_list' %}'">سابقاً</button>    </div>
 
     <!-- ربط مكتبة Leaflet.js -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>

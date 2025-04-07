@@ -48,30 +48,15 @@
           placeholder="كلمة السر"
           required
         />
-        <input
-          class="custom-input"
-          type="password"
-          name="password"
-          placeholder="تأكيد كلمة السر"
-        />
         <button class="custom-button" type="submit">التالي</button>
         <button class="custom-button1" type="button" onclick="window.location.href='{% url 'login' %}'">
           سابقا
         </button>
-        <div class="social-login">
-          <br />
-          <a href="#" class="google-btn"
-            ><img src="{% static 'img/IMG-20250312-WA0006.jpg'%}" alt="Google"
-          /></a>
-          <a href="#" class="facebook-btn"
-            ><img src="{% static 'img/IMG-20250312-WA0008.jpg'%}" alt="Facebook"
-          /></a>
-        </div>
       </form>
     </div>
     <script src="{% static 'js/register.js'%}"></script>
     <script src="{% static 'script.js'%}"></script>
-    <script src="{% static 'js/wow.js'%}"></script>
+    <script src="{% static 'js/wow.js' %}"></script>
     <script>
       new WOW().init();
     </script>

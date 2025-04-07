@@ -5,11 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>رمز التأكيد</title>
-    <link rel="stylesheet" href="{% static 'css/verification-code.css"' %}" />
+    <link rel="stylesheet" href="{% static 'css/verification-code.css' %}" />
   </head>
   <body>
     <div  class="verification-container">
-      <img src="{% static 'img/blog-wp-login.png" alt="User Icon' %}" class="user-icon" />
+      <img src="{% static 'img/blog-wp-login.png' %}" alt="User Icon" class="user-icon" />
       <h2>أدخل رمز التأكيد</h2>
       <form method="POST" action="{% url 'verify_code' %}" id="verification-code-form">
         {% csrf_token %}
@@ -24,6 +24,6 @@
       </form>
     </div>
     <script src="{% static 'js/verification-code.js' %}"></script>
-    <script src="{% static 'js/script.js'%}"></script>
+    <script src="{% static 'js/mo.js'%}"></script>
   </body>
 </html>

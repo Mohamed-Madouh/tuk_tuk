@@ -62,4 +62,11 @@ class Migration(migrations.Migration):
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='user_profile', to=settings.AUTH_USER_MODEL)),
             ],
         ),
+        migrations.AddField(
+            model_name='customuser',
+            name='phone_number',
+            field=models.CharField(max_length=150, null=True, blank=True, default='phone_number'),
+),
     ]
+
+

@@ -1,9 +1,15 @@
-document.addEventListener("DOMContentLoaded", function () {
+function initializeEventListeners() {
   document.getElementById("drivers-btn").addEventListener("click", function () {
-    window.location.href = "driver data.html";
+    const baseUrl = window.location.origin;
+    window.location.href = `${baseUrl}/tuk_tuk/templates/driver_detail.html`;
   });
 
-  document.getElementById("tuktuk-btn").addEventListener("click", function () {
-    window.location.href = "add-tuk-tuk.html";
-  });
-});
+  // Uncomment and modify the following block if needed
+  // document.getElementById("tuktuk-btn").addEventListener("click", function () {
+  //   window.location.href = "tuk_tuk/templates/add_driver.html";
+  // });
+}
+
+document.addEventListener("DOMContentLoaded", initializeEventListeners);
+//   });
+// });

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from .forms import Loginform, Registerform, AccountConfirmationForm
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -20,16 +20,39 @@ def login_user(request):
 
 def register_view(request):
     if request.method == 'POST':
-        form = Registerform(request.POST)
-        if form.is_valid():
-            form.save()
+        first_name = request.POST.get('firstName')
+        last_name = request.POST.get('lastName')
+        phone = request.POST.get('phone')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        # Input validation
+        if not email or not password:
+            messages.error(request, "يرجى إدخال البريد الإلكتروني وكلمة المرور.")
+            return render(request, 'register.html')
+        if CustomUser.objects.filter(email=email).exists():
+            messages.error(request, "البريد الإلكتروني مستخدم بالفعل.")
+            return render(request, 'register.html')
+        if phone and CustomUser.objects.filter(phone_number=phone).exists():
+            messages.error(request, "رقم الهاتف مستخدم بالفعل.")
+            return render(request, 'register.html')
+
+        try:
+            # Create the user
+            user = CustomUser.objects.create_user(
+                first_name=first_name,
+                last_name=last_name,
+                phone_number=phone,
+                email=email,
+                password=password
+            )
             messages.success(request, "تم إنشاء الحساب بنجاح!")
-            return redirect('home')
-        else:
-            messages.error(request, "تعذر إنشاء الحساب. يرجى التحقق من البيانات.")
-    else:
-        form = Registerform()
-    return render(request, 'register.html', {'form': form})
+            return redirect('home')  # Redirect to the home page
+        except Exception as e:
+            messages.error(request, f"حدث خطأ أثناء إنشاء الحساب: {str(e)}")
+            return render(request, 'register.html')
+
+    return render(request, 'register.html')
 
 def forgot_password(request):
     if request.method == "POST":
@@ -38,6 +61,11 @@ def forgot_password(request):
             phone_or_email = form.cleaned_data['phone_or_email']
             code = str(random.randint(1000, 9999))
             try:
+                user = CustomUser.objects.get(email=phone_or_email)
+                user.profile.reset_code = code
+                user.profile.save()
+
+                request.session['email'] = phone_or_email  # Store email in session
                 send_mail(
                     "Account Confirmation Code",
                     f"Your confirmation code is: {code}",
@@ -46,7 +74,9 @@ def forgot_password(request):
                 )
                 messages.success(request, "تم إرسال الكود إلى البريد الإلكتروني.")
                 return redirect('verify_code')
-            except Exception:
+            except CustomUser.DoesNotExist:
+                messages.error(request, "تعذر العثور على الحساب. يرجى التحقق من البيانات.")
+            except Exception as e:
                 messages.error(request, "تعذر إرسال الكود، يرجى المحاولة لاحقاً.")
         else:
             messages.error(request, "يرجى التحقق من رقم الهاتف أو البريد الإلكتروني.")
@@ -76,17 +106,22 @@ def verify_code(request):
     return render(request, 'verify_code.html')
 
 def reset_password(request):
-    if request.method == "POST":
+    """إعادة تعيين كلمة المرور"""
+    if request.method == 'POST':
         new_password = request.POST.get('newPassword')
-        email = request.session.get('email')
-        
-        try:
-            user = CustomUser.objects.get(email=email)
+        confirm_password = request.POST.get('confirmPassword')
+
+        # التحقق من تطابق كلمتي المرور
+        if new_password != confirm_password:
+            messages.error(request, "كلمتا المرور غير متطابقتين.")
+        else:
+            # تحديث كلمة المرور للمستخدم الحالي
+            user = request.user
             user.set_password(new_password)
             user.save()
-            messages.success(request, "تم تغيير كلمة المرور بنجاح.")
-            return redirect('login')  # رابط صفحة تسجيل الدخول
-        except CustomUser.DoesNotExist:
-            messages.error(request, "حدث خطأ. يرجى المحاولة مجددًا.")
-    
+            messages.success(request, "تم تحديث كلمة المرور بنجاح!")
+            return redirect('login')  # إعادة التوجيه إلى صفحة تسجيل الدخول
+
     return render(request, 'reset_password.html')
+
+

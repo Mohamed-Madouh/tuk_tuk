@@ -1,21 +1,23 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>إضافة تكتوك جديد</title>
-    <link rel="stylesheet" href="css/add-tuk-tuk.css" />
-    <link rel="stylesheet" href="css/animate.css" />
+    <link rel="stylesheet" href="{% static 'css/add-tuk-tuk.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/animate.css' %}" />
   </head>
   <body>
     <div class="wow bounceInRight tuk-tuk-container">
       <img
-        src="img/blog-wp-login.png"
+        src="{% static 'img/blog-wp-login.png' %}"
         alt="Tuk Tuk"
         class="tuk-tuk-image"
       />
       <h2 id="typing-text"></h2>
-      <form id="add-tuk-tuk-form">
+      <form method="post" id="add-tuk-tuk-form">
+        {% csrf_token %}
         <input
           class="custom-input"
           type="text"
@@ -45,14 +47,14 @@
           required
         />
         <button class="custom-button" type="submit">تسجيل</button>
-        <button class="back-button" type="button" onclick="window.location.href='home.html'">
-          سابقا
+        <button class="back-button" type="button" onclick="window.location.href='{% url 'home' %}'">
+          سابقاً
         </button>
       </form>
     </div>
-    <script src="js/add-tuk-tuk.js"></script>
-    <script src="script.js"></script>
-    <script src="js/wow.js"></script>
+    <script src="{% static 'js/add-tuk-tuk.js' %}"></script> 
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/wow.js' %}"></script>
     <script>
       new WOW().init();
     </script>
