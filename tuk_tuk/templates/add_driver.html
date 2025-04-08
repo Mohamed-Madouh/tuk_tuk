@@ -18,39 +18,20 @@
       <h2 id="typing-text"></h2>
       <form method="post" id="add-tuk-tuk-form">
         {% csrf_token %}
-        <input
-          class="custom-input"
-          type="text"
-          name="driverName"
-          placeholder="اسم السائق"
-          required
-        />
-        <input
-          class="custom-input"
-          type="text"
-          name="driverPhone"
-          placeholder="رقم السائق"
-          required
-        />
-        <input
-          class="custom-input"
-          type="text"
-          name="nationalId"
-          placeholder="الرقم القومي"
-          required
-        />
-        <input
-          class="custom-input"
-          type="text"
-          name="tukTukNumber"
-          placeholder="رقم التوكتوك"
-          required
-        />
-        <button class="custom-button" type="submit">تسجيل</button>
-        <button class="back-button" type="button" onclick="window.location.href='{% url 'home' %}'">
-          سابقاً
-        </button>
-      </form>
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <input class="custom-input" type="text" name="driverName" placeholder="اسم السائق" required>
+        <input class="custom-input" type="text" name="driverPhone" placeholder="رقم السائق" required>
+        <input class="custom-input" type="text" name="nationalId" placeholder="الرقم القومي" required>
+        <input class="custom-input" type="text" name="tukTukNumber" placeholder="رقم التوك توك" required>
+        <button class="custom-button" type="submit">إضافة السائق</button>
+        <button class="back-button" type="button" onclick="window.location.href='{% url 'home' %}'">سابقاً</button>
+    </form>
     </div>
     <script src="{% static 'js/add-tuk-tuk.js' %}"></script> 
     <script src="{% static 'js/script.js' %}"></script>

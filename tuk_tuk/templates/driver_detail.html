@@ -3,18 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>صفحة السائق</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         /* التصميم العام */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
-            margin: 0;
-            padding: 0;
-        }
-
+        body { font-family: Arial, sans-serif; background-color: #000; color: #fff; margin: 0; padding: 0; }
+        #map { width: 100%; height: 500px; border-radius: 10px; margin-top: 20px; }
         .container {
             display: flex;
             gap: 20px;
@@ -62,11 +57,7 @@
             margin-left: 20px;
         }
 
-        #map {
-            width: 100%;
-            height: 600px;
-            border-radius: 10px;
-        }
+
 
         .previous-button {
             position: absolute;
@@ -117,21 +108,64 @@
         <button class="previous-button" onclick="window.location.href='{% url 'driver_list' %}'">سابقاً</button>    </div>
 
     <!-- ربط مكتبة Leaflet.js -->
+
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        // إعداد الخريطة
-        var map = L.map('map').setView([30.0444, 31.2357], 13); // الإسكندرية كمثال
-
-        // إضافة طبقة خلفية (خريطة)
+        var map = L.map('map').setView([{{ driver.latitude|default:0 }}, {{ driver.longitude|default:0 }}], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        // إضافة علامة GPS عند النقر على الخريطة
-        map.on('click', function (e) {
-            var latlng = e.latlng;
-            var marker = L.marker(latlng).addTo(map);
-            marker.bindPopup("تم تحديد الموقع: " + latlng.toString()).openPopup();
+        var marker = L.marker([{{ driver.latitude|default:0 }}, {{ driver.longitude|default:0 }}]).addTo(map);
+        marker.bindPopup("موقع السائق").openPopup();
+
+        // تحميل خط السير وعرضه
+        fetch(`/driver/{{ driver.id }}/routes/`)
+            .then(response => response.json())
+            .then(data => {
+                data.routes.forEach((point, index) => {
+                    if (index === 0) return;
+
+                    const prevPoint = data.routes[index - 1];
+                    const routeSegment = [
+                        [prevPoint.latitude, prevPoint.longitude],
+                        [point.latitude, point.longitude]
+                    ];
+
+                    let color = "blue";
+                    if (point.speed > 80) color = "red";
+                    else if (point.speed > 50) color = "orange";
+
+                    L.polyline(routeSegment, { color: color, weight: 4, opacity: 0.8 })
+                        .addTo(map)
+                        .bindPopup(`السرعة: ${point.speed ? point.speed.toFixed(2) : "غير متوفرة"} كم/ساعة`);
+                });
+
+                const allCoordinates = data.routes.map(p => [p.latitude, p.longitude]);
+                if (allCoordinates.length) {
+                    map.fitBounds(allCoordinates);
+                }
+            });
+
+        // تحديث الموقع ديناميكيًا
+        navigator.geolocation.watchPosition(function (position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const speed = position.coords.speed || null; // السرعة الحالية
+
+            marker.setLatLng([latitude, longitude]);
+            map.setView([latitude, longitude], 13);
+
+            fetch(`/driver/{{ driver.id }}/update-location/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ latitude, longitude, speed })
+            }).then(response => response.json())
+              .then(data => console.log("Location updated:", data))
+              .catch(error => console.error("Error:", error));
         });
     </script>
 </body>
