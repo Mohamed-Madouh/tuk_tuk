@@ -1,6 +1,7 @@
 from django.db import models
 
 class Driver(models.Model):
+    image = models.ImageField(upload_to='profile_pics/', default='default.jpg')
     name = models.CharField(max_length=100, verbose_name="اسم السائق")
     phone_number = models.CharField(max_length=11, verbose_name="رقم الهاتف")
     national_id = models.CharField(max_length=14, unique=True, verbose_name="الرقم القومي")

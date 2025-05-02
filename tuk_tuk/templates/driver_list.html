@@ -4,20 +4,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>صفحة المركبة</title>
-    <link rel="stylesheet" href="{% static 'styles.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+    <title>صافحة المركبة</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}"/>
   </head>
   <body>
     <div class="container">
-      {% for driver in drivers %}
+      <div class="buttons-group">
+        <div class="top-row">
+      {% comment %} {% for driver in drivers %}
       <div class="driver-button">
         <button
           class="person-button"
           onclick="window.location.href='{% url 'driver_detail' driver.id %}'"
         >
           {{ driver.name }}
-        </button>
+        </button> {% endcomment %}
+        {% for driver in drivers %}
+        <button
+        class="person-button"
+        onclick="window.location.href='{% url 'driver_detail' driver.id %}'"
+      >
+        <div class="person-icon">
+          <img src="{{ driver.image.url|default:'static/default.jpg' }}" alt="{{ driver.name }}" />
+        </div>
+        {{ driver.name }}
+      </button>
       </div>
       {% endfor %}
       <button class="previous-button" onclick="window.location.href='{% url 'home' %}'">سابقاً</button>
