@@ -32,6 +32,7 @@
           type="tel"
           name="phone"
           placeholder="رقم الهاتف"
+          maxlength="11"
           required
         />
         <input
@@ -48,7 +49,7 @@
           placeholder="كلمة السر"
           required
         />
-        <button class="custom-button" type="submit">التالي</button>
+        <button class="custom-button" type="submit" onclick="window.location.href='{% url 'login' %}'">التالي</button>
         <button class="custom-button1" type="button" onclick="window.location.href='{% url 'login' %}'">
           سابقا
         </button>

@@ -1,172 +1,291 @@
 <!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token }}">
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>صفحة السائق</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- إضافة Font Awesome للأيقونات -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <style>
-        /* التصميم العام */
-        body { font-family: Arial, sans-serif; background-color: #000; color: #fff; margin: 0; padding: 0; }
-        #map { width: 100%; height: 500px; border-radius: 10px; margin-top: 20px; }
-        .container {
-            display: flex;
-            gap: 20px;
-            width: 100%;
-            height: 93.5vh;
-            max-width: 1317px;
-            background-color: #0E2A43;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
+      /* التصميم العام */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #000;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+        position: relative;
+      }
 
-        .info-section {
-            flex: 1;
-            text-align: center;
-        }
+      .container {
+        display: flex;
+        gap: 20px;
+        width: 100%;
+        height: 93.5vh;
+        max-width: 1317px;
+        background-color: #0e2a43;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        position: relative;
+      }
 
-        .info-item {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 10px;
-        }
+      .info-section {
+        flex: 1;
+        text-align: center;
+      }
 
-        .info-item label {
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+      }
 
-        .div {
-            padding: 10px;
-            border: none;
-            height: 2vh;
-            border-radius: 5px;
-            background-color: #333;
-            color: #fff;
-            font-size: 14px;
-            width: 100%;
-        }
+      .info-item label {
+        font-size: 20px;
+        margin-bottom: 5px;
+      }
 
-        .map-section {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-left: 20px;
-        }
+      .div {
+        padding: 10px;
+        border: none;
+        height: 2vh;
+        border-radius: 5px;
+        background-color: #333;
+        color: #fff;
+        font-size: 14px;
+        width: 100%;
+      }
 
+      .map-section {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 20px;
+      }
 
+      #map {
+        width: 100%;
+        height: 600px;
+        border-radius: 10px;
+      }
 
-        .previous-button {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background-color: orange;
-            color: #000;
-            width: 100px;
-            border: none;
-            padding: 10px 20px;
-            margin-left: 30px;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-        }
+      .previous-button {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background-color: orange;
+        color: #000;
+        width: 100px;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      /* تصميم النجوم */
+      .rating-container {
+        margin-top: 30px;
+      }
+
+      .rating-title {
+        font-size: 22px;
+        margin-bottom: 10px;
+      }
+
+      .rating-stars {
+        direction: ltr;
+        unicode-bidi: bidi-override;
+        text-align: center;
+      }
+
+      .rating-stars .star {
+        font-size: 30px;
+        color: #ddd;
+        cursor: pointer;
+        display: inline-block;
+      }
+
+      .rating-stars .star:hover,
+      .rating-stars .star:hover ~ .star {
+        color: gold;
+      }
+
+      .rating-stars .star.active {
+        color: gold;
+      }
+
+      /* أيقونات التواصل */
+      .contact-icons {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        display: flex;
+        gap: 15px;
+        z-index: 1000;
+      }
+
+      .contact-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .contact-icon:hover {
+        transform: scale(1.1);
+      }
+
+      .phone-icon {
+        background-color: #25d366;
+      }
+
+      .whatsapp-icon {
+        background-color: #25d366;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <!-- المعلومات الشخصية -->
-        <div class="info-section">
-            <h2>معلومات السائق</h2>
-            <div class="info-item">
-                <label for="name">اسم السائق:</label>
-                <div class="div"> {{ driver.name }}</div>
-            </div><br><br>
-            <div class="info-item">
-                <label for="phone">رقم السائق:</label>
-                <div class="div">{{ driver.phone_number }}</div>
-            </div><br><br>
-            <div class="info-item">
-                <label for="national-id">الرقم القومي:</label>
-                <div class="div">{{ driver.national_id }}</div>
-            </div><br><br>
-            <div class="info-item">
-                <label for="company-phone">رقم الشركة:</label>
-                <div class="div">{{ driver.tuk_tuk_number }}5</div>
-            </div>
+      <!-- المعلومات الشخصية -->
+      <div class="info-section">
+        <h2 class="info title">معلومات السائق</h2>
+        <div class="info-item">
+          <label for="name">اسم السائق:</label>
+          <div class="div">{{ driver.name }}</div>
+        </div>
+        <br /><br />
+        <div class="info-item">
+          <label for="phone">رقم السائق:</label>
+          <div class="div">{{ driver.phone_number }}</div>
+        </div>
+        <br /><br />
+        <div class="info-item">
+          <label for="national-id">الرقم القومي:</label>
+          <div class="div">{{ driver.national_id }}</div>
+        </div>
+        <br /><br />
+        <div class="info-item">
+          <label for="company-phone">رقم الشركة:</label>
+          <div class="div">{{ driver.tuk_tuk_number }}</div>
         </div>
 
-        <!-- الخريطة -->
-        <div class="map-section">
-            <!-- <h2>موقع التكتوك</h2> -->
-            <div id="map"></div>
+        <!-- تقييم النجوم -->
+        <div class="rating-container">
+          <div class="rating-title">تقييم السائق:</div>
+          <div class="rating-stars">
+            <span class="star" data-rating="1">★</span>
+            <span class="star" data-rating="2">★</span>
+            <span class="star" data-rating="3">★</span>
+            <span class="star" data-rating="4">★</span>
+            <span class="star" data-rating="5">★</span>
+          </div>
         </div>
+      </div>
 
-        <!-- الزر "سابقاً" -->
-        <button class="previous-button" onclick="window.location.href='{% url 'driver_list' %}'">سابقاً</button>    </div>
+      <!-- الخريطة -->
+      <div class="map-section">
+        <div id="map"></div>
+      </div>
+
+      <!-- أيقونات التواصل -->
+      <div class="contact-icons">
+        <a href="tel:{{ driver.phone_number }}" class="contact-icon phone-icon">
+          <i class="fas fa-phone"></i>
+        </a>
+        <a href="https://wa.me/{{ driver.phone_number }}" class="contact-icon whatsapp-icon">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </div>
+
+      <!-- الزر "سابقاً" -->
+      <button
+        class="previous-button"
+        onclick="window.location.href=''{% url 'driver_list' %}'">
+        سابقاً
+      </button>
+    </div>
 
     <!-- ربط مكتبة Leaflet.js -->
-
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        var map = L.map('map').setView([{{ driver.latitude|default:0 }}, {{ driver.longitude|default:0 }}], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
+      // إعداد الخريطة مع جلب الموقع الحقيقي
+      var map = L.map("map");
+      var marker;
 
-        var marker = L.marker([{{ driver.latitude|default:0 }}, {{ driver.longitude|default:0 }}]).addTo(map);
-        marker.bindPopup("موقع السائق").openPopup();
+      // محاولة جلب الموقع الحالي للمستخدم
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            var userLocation = [
+              position.coords.latitude,
+              position.coords.longitude,
+            ];
+            map.setView(userLocation, 15);
 
-        // تحميل خط السير وعرضه
-        fetch(`/driver/{{ driver.id }}/routes/`)
-            .then(response => response.json())
-            .then(data => {
-                data.routes.forEach((point, index) => {
-                    if (index === 0) return;
+            // إضافة علامة الموقع الحقيقي
+            marker = L.marker(userLocation).addTo(map);
+            marker.bindPopup("الموقع الحالي للسائق").openPopup();
 
-                    const prevPoint = data.routes[index - 1];
-                    const routeSegment = [
-                        [prevPoint.latitude, prevPoint.longitude],
-                        [point.latitude, point.longitude]
-                    ];
+            // إضافة دائرة لتحديد دقة الموقع
+            L.circle(userLocation, {
+              color: "red",
+              fillColor: "#f03",
+              fillOpacity: 0.2,
+              radius: position.coords.accuracy / 2,
+            }).addTo(map);
+          },
+          function (error) {
+            // إذا فشل جلب الموقع نستخدم موقع افتراضي
+            var defaultLocation = [30.0444, 31.2357]; // القاهرة
+            map.setView(defaultLocation, 13);
+            marker = L.marker(defaultLocation).addTo(map);
+            marker.bindPopup("الموقع الافتراضي للسائق").openPopup();
+            alert("تعذر الحصول على الموقع الحقيقي، يتم عرض موقع افتراضي");
+          }
+        );
+      } else {
+        // إذا المتصفح لا يدعم تحديد الموقع
+        var defaultLocation = [30.0444, 31.2357]; // القاهرة
+        map.setView(defaultLocation, 13);
+        marker = L.marker(defaultLocation).addTo(map);
+        marker.bindPopup("الموقع الافتراضي للسائق").openPopup();
+        alert("متصفحك لا يدعم خاصية تحديد الموقع، يتم عرض موقع افتراضي");
+      }
 
-                    let color = "blue";
-                    if (point.speed > 80) color = "red";
-                    else if (point.speed > 50) color = "orange";
+      // إضافة طبقة خلفية (خريطة)
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
+      }).addTo(map);
 
-                    L.polyline(routeSegment, { color: color, weight: 4, opacity: 0.8 })
-                        .addTo(map)
-                        .bindPopup(`السرعة: ${point.speed ? point.speed.toFixed(2) : "غير متوفرة"} كم/ساعة`);
-                });
+      // نظام التقييم بالنجوم
+      document.querySelectorAll(".star").forEach((star) => {
+        star.addEventListener("click", function () {
+          const rating = this.getAttribute("data-rating");
+          alert(`شكراً لتقييمك! تم التقييم بـ ${rating} نجوم`);
 
-                const allCoordinates = data.routes.map(p => [p.latitude, p.longitude]);
-                if (allCoordinates.length) {
-                    map.fitBounds(allCoordinates);
-                }
-            });
-
-        // تحديث الموقع ديناميكيًا
-        navigator.geolocation.watchPosition(function (position) {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-            const speed = position.coords.speed || null; // السرعة الحالية
-
-            marker.setLatLng([latitude, longitude]);
-            map.setView([latitude, longitude], 13);
-
-            fetch(`/driver/{{ driver.id }}/update-location/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({ latitude, longitude, speed })
-            }).then(response => response.json())
-              .then(data => console.log("Location updated:", data))
-              .catch(error => console.error("Error:", error));
+          document.querySelectorAll(".star").forEach((s) => {
+            s.classList.toggle(
+              "active",
+              s.getAttribute("data-rating") <= rating
+            );
+          });
         });
+      });
     </script>
-</body>
+  </body>
 </html>
+
